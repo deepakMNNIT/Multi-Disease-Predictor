@@ -104,7 +104,7 @@ def get_history_data():
 
 @app.route("/predict", methods = ['POST', 'GET'])
 def predictPage():
-    # try:
+    try:
         if request.method == 'POST':
             to_predict_dict1 = request.form.to_dict()
             
@@ -255,9 +255,9 @@ def predictPage():
             #     dt = json.loads(dt)
             return render_template('predict.html', pred = pred, a = a, result=result)
                 
-    # except:
-    #     message = "Please enter valid Data"
-    #     return render_template("home.html", message = message)
+    except:
+        message = "Please enter valid Data"
+        return render_template("home.html", message = message)
 
 
 
