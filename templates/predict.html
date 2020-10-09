@@ -4,10 +4,10 @@
         <div class="col-md-3"></div>
         <div class="col-md-6">
             {% if pred == 1 %}
-                <div class="card card-body alert alert-danger"><center>Sorry! Please consult DOCTOR. <br> Seriousness on the sclae of 0-100 : {{a}}&percnt;</center></div>
+                <div class="card card-body alert alert-danger"><center>Severity Score : {{c}}&percnt; <br>Please Consult a PHYSICIAN</center></div>
                 <div class="card card-body alert alert-danger"><center>Procedure Recommended : <br> {{result}} </center></div>
             {% else %}
-                <div class="card card-body alert alert-success"><center>Great! You are HEALTHY.<br> But in Future, Probability of Having this disease is : {{a}}&percnt;</center></div>
+                <div class="card card-body alert alert-success"><center>Severity Score : {{c}}&percnt; <br>HEALTHY</center></div>
             {% endif %}
             <div class="row">
                 <div class="col-md-4"></div>
