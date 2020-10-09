@@ -1,4 +1,4 @@
-from py_files.model import Liver as LiverModel
+# from py_files.model import Liver as LiverModel
 from py_files.model import Diabetes as DiabetesModel
 from py_files.model import Diabetes_Procedures as Diabetes_ProceduresModel
 from py_files.database import db_session as db
@@ -7,10 +7,10 @@ from graphene import relay, Int
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 import json
 
-class Liver(SQLAlchemyObjectType):
-    class Meta:
-        model = LiverModel
-        interfaces = (relay.Node, )
+# class Liver(SQLAlchemyObjectType):
+#     class Meta:
+#         model = LiverModel
+#         interfaces = (relay.Node, )
 
 
 class Diabetes(SQLAlchemyObjectType):
@@ -28,7 +28,7 @@ class Query(graphene.ObjectType):
     node = relay.Node.Field()
     # if you don't want node and edges : replace SQLAlchemyConnectionField with graphene.List
     all_diabetes = SQLAlchemyConnectionField(Diabetes, patientid=graphene.String())#, providerId=graphene.Int())
-    all_liver = SQLAlchemyConnectionField(Liver, patientid=graphene.String())#, sort=Provider_Review.sort_argument())
+    # all_liver = SQLAlchemyConnectionField(Liver, patientid=graphene.String())#, sort=Provider_Review.sort_argument())
     all_procedures = SQLAlchemyConnectionField(Diabetes_Procedures, conf=graphene.String())
 #    def resolve_all_providers(self, info, **args):
 #      query = Provider.get_query(info)
@@ -40,10 +40,10 @@ class Query(graphene.ObjectType):
       patientid = args.get('patientid')
       return query.filter(DiabetesModel.patientid == patientid).all()
   
-    def resolve_all_liver(self, info, **args):
-      query = Liver.get_query(info)
-      patientid = args.get('patientid')
-      return query.filter(LiverModel.patientid == patientid).all()
+    # def resolve_all_liver(self, info, **args):
+    #   query = Liver.get_query(info)
+    #   patientid = args.get('patientid')
+    #   return query.filter(LiverModel.patientid == patientid).all()
     
     def resolve_all_procedures(self, info, **args):
       query = Diabetes_Procedures.get_query(info)
@@ -74,35 +74,35 @@ class AddDiabetes(graphene.Mutation):
         return AddDiabetes(post=post)
     
     
-class AddLiver(graphene.Mutation):
-    class Arguments:
-        patientid = graphene.String(required=True)
-        age = graphene.Int(required=True)
-        totalbilirubin = graphene.String(required=True)
-        directbilirubin = graphene.String(required=True)
-        alkalinephosphotase = graphene.String(required=True)
-        alamineaminotransferase = graphene.String(required=True)
-        aspartateaminotransferase = graphene.String(required=True)
-        totalprotiens = graphene.String(required=True)
-        albumin = graphene.String(required=True)
-        albuminandglobulinratio = graphene.String(required=True)
-        gender = graphene.String(required=True)
-        result = graphene.String(required=True)
-        conf = graphene.String(required=True)
+# class AddLiver(graphene.Mutation):
+#     class Arguments:
+#         patientid = graphene.String(required=True)
+#         age = graphene.Int(required=True)
+#         totalbilirubin = graphene.String(required=True)
+#         directbilirubin = graphene.String(required=True)
+#         alkalinephosphotase = graphene.String(required=True)
+#         alamineaminotransferase = graphene.String(required=True)
+#         aspartateaminotransferase = graphene.String(required=True)
+#         totalprotiens = graphene.String(required=True)
+#         albumin = graphene.String(required=True)
+#         albuminandglobulinratio = graphene.String(required=True)
+#         gender = graphene.String(required=True)
+#         result = graphene.String(required=True)
+#         conf = graphene.String(required=True)
         
-    post = graphene.Field(lambda: Liver)
-    def mutate(self, info, patientid, age, totalbilirubin, directbilirubin, alkalinephosphotase, alamineaminotransferase, aspartateaminotransferase, totalprotiens, albumin, albuminandglobulinratio, gender, result, conf):
-        #user = User.query.filter_by(username=username).first()
-        post = LiverModel(patientid=patientid, age=age, totalbilirubin=totalbilirubin, directbilirubin=directbilirubin, alkalinephosphotase=alkalinephosphotase, alamineaminotransferase=alamineaminotransferase, aspartateaminotransferase=aspartateaminotransferase, totalprotiens=totalprotiens, albumin=albumin, albuminandglobulinratio=albuminandglobulinratio, gender=gender, result=result, conf=conf)
-        db.add(post)
-        db.commit()
-        return AddLiver(post=post)
+#     post = graphene.Field(lambda: Liver)
+#     def mutate(self, info, patientid, age, totalbilirubin, directbilirubin, alkalinephosphotase, alamineaminotransferase, aspartateaminotransferase, totalprotiens, albumin, albuminandglobulinratio, gender, result, conf):
+#         #user = User.query.filter_by(username=username).first()
+#         post = LiverModel(patientid=patientid, age=age, totalbilirubin=totalbilirubin, directbilirubin=directbilirubin, alkalinephosphotase=alkalinephosphotase, alamineaminotransferase=alamineaminotransferase, aspartateaminotransferase=aspartateaminotransferase, totalprotiens=totalprotiens, albumin=albumin, albuminandglobulinratio=albuminandglobulinratio, gender=gender, result=result, conf=conf)
+#         db.add(post)
+#         db.commit()
+#         return AddLiver(post=post)
     
 class Mutation(graphene.ObjectType):
     add_diab = AddDiabetes.Field()
-    add_liv = AddLiver.Field()
+    # add_liv = AddLiver.Field()
     
-schema = graphene.Schema(query=Query, mutation=Mutation, types=[Diabetes, Liver])
+schema = graphene.Schema(query=Query, mutation=Mutation, types=[Diabetes, Diabetes_Procedures])
 
 # d_string = '''query($patientid : String!){
 #                                   allDiabetes(patientid: $patientid){
@@ -122,10 +122,10 @@ schema = graphene.Schema(query=Query, mutation=Mutation, types=[Diabetes, Liver]
 #                                             },)
 # d_dt = json.dumps(d_result.data)
 # d_dt = json.loads(d_dt)
-# # dat = str(d_dt)
-# # # dat1 = dat[dat.find("'edges") : len(dat)-2]    
-# # # dat2 = json.dumps(dat1)
-# # # dat2 = json.loads(dat2)
-# # res1 = dat[dat.find("'procedure':")+14 : ]
-# # res = res1[ : res1.find("'")]
+# dat = str(d_dt)
+# dat1 = dat[dat.find("'edges") : len(dat)-2] 
+# # json_acceptable_string = s.replace("'", "\"")   
+# dat2 = json.dumps(dat1)
+# dat2 = json.loads(dat2)
+# # return d_dt
 # print(d_dt)
