@@ -3,34 +3,75 @@
 {% if message %}
         <div class="alert alert-danger">{{ message }}</div>
 {% endif %}
-    <!DOCTYPE html>
-<html>
-<head>
-    <title>Convert JSON Data to HTML Table</title>
-    <style>
-        th, td, p, input {
-            font:14px Verdana;
-        }
-        table, th, td 
-        {
-            border: solid 1px #DDD;
-            border-collapse: collapse;
-            padding: 2px 3px;
-            text-align: center;
-        }
-        th {
-            font-weight:bold;
-        }
-    </style>
-</head>
-<body>
-<script>
-var dat2 = JSON.parse('{{ dat2 | tojson | safe}}');
-document.write(dat2)
+            <head>
+                <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+                <title>Convert JSON Data to HTML Table</title>
+                <style>
+                    th, td, p, input {
+                        font:14px Verdana;
+                    }
+                    table, th, td 
+                    {
+                        border: solid 1px #DDD;
+                        border-collapse: collapse;
+                        padding: 2px 3px;
+                        text-align: center;
+                    }
+                    th {
+                        font-weight:bold;
+                    }
+                </style>
+            </head>
+            <body>
 
-</script>
-</body>
-</html>
+                <table id="dataTable" >
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Result</th>
+                            <th>Conf</th>
+                            <th>Procedure</th>
+                            <th>Last Updated Date-Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable_body">
+                    </tbody>
+                </table>
+
+                <script>
+                    var d_dt = JSON.parse('{{ d_dt | tojson | safe}}');
+                    //document.write(dat2)
+                    debugger;
 
 
+                    var j$ = jQuery.noConflict();
+
+                    renderTable(d_dt.allDiabetes.edges);
+
+                    function renderTable(jsonData){
+                        let length = jsonData.length;
+
+                        let tableEntries = '';
+                        if (jsonData.length > 0) {
+                            j$.each(jsonData, function (i, item) {
+                                        debugger;
+                                        tableEntries += "<tr><td>"+item.node.patientid+"</td><td>"+item.node.result+"</td><td>"+item.node.conf+"</td><td>"+item.node.procedure+"</td><td>"+
+                                                formatDateTime(item.node.lastupdatedat)+"</td></tr>";
+                            });
+
+                            j$('#dataTable_body').html(tableEntries);
+                        }
+
+                    }
+
+                    function formatDateTime(dateTime){
+                        let dateStr = dateTime.substring(0, dateTime.indexOf('T'));
+                        let timeStr = dateTime.substring(dateTime.indexOf('T')+1, dateTime.indexOf('.'));
+
+                        return dateStr+' '+timeStr;
+                    }
+
+
+                </script>
+            </body>
 {% endblock %}
