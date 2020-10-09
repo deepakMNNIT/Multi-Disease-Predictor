@@ -104,22 +104,41 @@ def get_history_data():
 
 @app.route("/predict", methods = ['POST', 'GET'])
 def predictPage():
-    try:
+    # try:
         if request.method == 'POST':
             to_predict_dict1 = request.form.to_dict()
+            # print(to_predict_dict1)
             
             to_predict_list1 = list(map(float, list(to_predict_dict1.values())))
-            to_predict_dict = to_predict_dict1
-            to_predict_list = to_predict_list1
-            print(to_predict_dict1)
-            if len(to_predict_list) == 9:
-                pat_id = str(to_predict_dict1['patientid'])
-                to_predict_list.pop(0)
-            if len(to_predict_list) == 9:
-                del to_predict_dict['patientid']
-            
-            pred = predict(to_predict_list, to_predict_dict)
-            a = predict_proba(to_predict_list, to_predict_dict)
+            # print(to_predict_list1)
+            if len(to_predict_list1) == 9:
+                pat_id = str(to_predict_dict1['patientid']) 
+                to_predict_dict2 = {}
+                to_predict_dict2['pregnancies'] = int(to_predict_list1[8])
+                to_predict_dict2['glucose'] = to_predict_list1[4]
+                to_predict_dict2['bloodpressure'] = to_predict_list1[3]
+                to_predict_dict2['skinthickness'] = to_predict_list1[7]
+                to_predict_dict2['insulin'] = to_predict_list1[5]
+                to_predict_dict2['bmi'] = to_predict_list1[2]
+                to_predict_dict2['dpf'] = to_predict_list1[6]
+                to_predict_dict2['age'] = int(to_predict_list1[1])
+            else :
+                to_predict_dict2 = to_predict_dict1
+                
+            # to_predict_dict = to_predict_dict1
+            # to_predict_list = to_predict_list1
+           
+            # if len(to_predict_list) == 9:
+                
+            #     to_predict_list.pop(0)
+                
+                
+            to_predict_list2 = list(map(float, list(to_predict_dict2.values())))    
+            # print(to_predict_dict2)
+            # print(to_predict_list2)
+
+            pred = predict(to_predict_list2, to_predict_dict2)
+            a = predict_proba(to_predict_list2, to_predict_dict2)
             res = ''
             conf_score = ''
             if(pred == 1):
@@ -127,30 +146,33 @@ def predictPage():
             else:
                 res = 'negative'
             conf_score = str(a)
+            c = a
             result = ''
-            if len(to_predict_list) == 8:
+            if len(to_predict_list2) == 8:
                 conf_score1 = int(float(conf_score))
                 
-                if(conf_score1 > 50 and conf_score1 <= 55):
-                    conf_score1 = 55
-                elif(conf_score1 > 55 and conf_score1 <= 60):
+                if(conf_score1 < 50):
+                    conf_score1 = 50
+                if(conf_score1 > 50 and conf_score1 <= 60):
                     conf_score1 = 60
-                elif(conf_score1 > 60 and conf_score1 <= 65):
-                    conf_score1 = 65
-                elif(conf_score1 > 65 and conf_score1 <= 70):
-                    conf_score1 = 70
-                elif(conf_score1 > 70 and conf_score1 <= 75):
-                    conf_score1 = 75
-                elif(conf_score1 > 75 and conf_score1 <= 80):
+                elif(conf_score1 > 60 and conf_score1 <= 80):
                     conf_score1 = 80
-                elif(conf_score1 > 80 and conf_score1 <= 85):
-                    conf_score1 = 85
-                elif(conf_score1 > 85 and conf_score1 <= 90):
-                    conf_score1 = 90
-                elif(conf_score1 > 90 and conf_score1 <= 95):
-                    conf_score1 = 95
-                elif(conf_score1 > 95 and conf_score1 <= 100):
+                elif(conf_score1 > 80 and conf_score1 <= 100):
                     conf_score1 = 100
+                # elif(conf_score1 > 65 and conf_score1 <= 70):
+                #     conf_score1 = 70
+                # elif(conf_score1 > 70 and conf_score1 <= 75):
+                #     conf_score1 = 75
+                # elif(conf_score1 > 75 and conf_score1 <= 80):
+                #     conf_score1 = 80
+                # elif(conf_score1 > 80 and conf_score1 <= 85):
+                #     conf_score1 = 85
+                # elif(conf_score1 > 85 and conf_score1 <= 90):
+                #     conf_score1 = 90
+                # elif(conf_score1 > 90 and conf_score1 <= 95):
+                #     conf_score1 = 95
+                # elif(conf_score1 > 95 and conf_score1 <= 100):
+                #     conf_score1 = 100
                  
                 conf_score2 = str(conf_score1)
                 qr_string = '''query($conf : String!){
@@ -193,16 +215,16 @@ def predictPage():
                     '''
                 fin_result = py_files.schema.schema.execute(mut_string,variables={
                                         'patientid' : pat_id,
-                                        'numberofpregnancies': int(to_predict_dict['pregnancies']),
-                                        'glucose' : str(to_predict_dict['glucose']),
-                                        'bloodpressure' : str(to_predict_dict['bloodpressure']),
-                                        'skinthickness' : str(to_predict_dict['skinthickness']),
-                                        'insulinlevel' : str(to_predict_dict['insulin']),
-                                        'bodymassindex' : str(to_predict_dict['bmi']),
-                                        'diabetespedigreefunction' : str(to_predict_dict['dpf']),
-                                        'age' : int(to_predict_dict['age']),
+                                        'numberofpregnancies': int(to_predict_dict2['pregnancies']),
+                                        'glucose' : str(to_predict_dict2['glucose']),
+                                        'bloodpressure' : str(to_predict_dict2['bloodpressure']),
+                                        'skinthickness' : str(to_predict_dict2['skinthickness']),
+                                        'insulinlevel' : str(to_predict_dict2['insulin']),
+                                        'bodymassindex' : str(to_predict_dict2['bmi']),
+                                        'diabetespedigreefunction' : str(to_predict_dict2['dpf']),
+                                        'age' : int(to_predict_dict2['age']),
                                         'result' : res,
-                                        'conf': conf_score,
+                                        'conf': c,
                                         'procedure' : result
                                     
                                 },)
@@ -211,7 +233,7 @@ def predictPage():
                 dt = json.dumps(fin_result.data)
                 dt = json.loads(dt)
                 
-                
+              # result = 
             
             # if len(to_predict_list) == 10:
             #     mut_string = '''mutation ($patientid : String!, $age : Int!, $totalbilirubin : String!, $directbilirubin : String!, $alkalinephosphotase : String!, $alamineaminotransferase : String!, $aspartateaminotransferase : String!, $totalprotiens : String!, $albumin : String!, $albuminandglobulinratio : String!, $gender : String!, $result : String!, $conf : String!){
@@ -253,11 +275,11 @@ def predictPage():
             #                     },)
             #     dt = json.dumps(fin_result.data)
             #     dt = json.loads(dt)
-            return render_template('predict.html', pred = pred, a = a, result=result)
+            return render_template('predict.html', pred = pred, c = c, result=result)
                 
-    except:
-        message = "Please enter valid Data"
-        return render_template("home.html", message = message)
+    # except:
+    #     message = "Please enter valid Data"
+    #     return render_template("home.html", message = message)
 
 
 
@@ -354,17 +376,7 @@ def getData():
             d_dt = json.dumps(d_result.data)
             d_dt = json.loads(d_dt)
             
-            # l_result = py_files.schema.schema.execute(l_string,variables={
-            #                                         'patientid' : patient_id    
-            #                                 },)
-            # l_dt = json.dumps(l_result.data)
-            # l_dt = json.loads(l_dt)
-            dat = str(d_dt)
-            dat1 = dat[dat.find("'edges") : len(dat)-2]    
-            dat2 = json.dumps(dat1)
-            dat2 = json.loads(dat2)
-            # return d_dt
-            return render_template('provide_data.html', dat2=dat2)
+            return render_template('provide_data.html', d_dt=d_dt)
 
 
 
